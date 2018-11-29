@@ -9,6 +9,10 @@
   "repository": {
     "url": "https://github.com/boythan/AwesomeList.git",
     "type": "git"
+  },
+  "author": {
+    "name": "Vinh Do",
+    "email": "vinhdx.k57@gmail.com",
+    "url": "https://github.com/boythan"
   }
-  
 }
