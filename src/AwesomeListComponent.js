@@ -44,6 +44,7 @@ class AwesomeListComponent extends Component {
         createSections: ViewPropTypes.func,
         renderEmptyView: ViewPropTypes.func,
         listHeaderComponent: ViewPropTypes.func,
+        emptyText: ViewPropTypes.string
 
     };
 
@@ -70,7 +71,8 @@ class AwesomeListComponent extends Component {
         renderSectionHeader: null,
         createSections: null,
         renderEmptyView: null,
-        listHeaderComponent: null
+        listHeaderComponent: null,
+        emptyText: 'No result'
 
     }
 
@@ -240,7 +242,8 @@ class AwesomeListComponent extends Component {
             renderSeparator,
             renderSectionHeader,
             renderEmptyView,
-            listHeaderComponent
+            listHeaderComponent,
+            emptyText
         } = this.props;
 
         return (
@@ -271,7 +274,7 @@ class AwesomeListComponent extends Component {
                     />
 
                 }
-                <EmptyView mode={this.state.emptyMode} retry={() => this.onRetry()} renderEmptyView={renderEmptyView} />
+                <EmptyView mode={this.state.emptyMode} retry={() => this.onRetry()} renderEmptyView={renderEmptyView} emptyText={emptyText} />
             </View>
         )
     }
