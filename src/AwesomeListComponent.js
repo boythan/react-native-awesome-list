@@ -196,7 +196,7 @@ class AwesomeListComponent extends Component {
 
     /** Apply filter  to list*/
     applyFilter(actionFilter) {
-        if (!this.state.data || this.state.data.length == []) {
+        if ((!this.state.data || this.state.data.length === 0) && !this.orginData) {
             console.log('Cannot apply filter case the data is empty')
             return;
         }
