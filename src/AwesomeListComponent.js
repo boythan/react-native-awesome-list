@@ -5,7 +5,7 @@ import AwesomeListStyle from './AwesomeListStyle';
 import { isObject, isArray, isString } from './AwesomeListUtils';
 import EmptyView from './EmptyView';
 import PagingView from './PagingView';
-
+import _ from 'lodash'
 const DEFAULT_PAGING_DATA = {
     pageIndex: 1,
     pageSize: 20,
