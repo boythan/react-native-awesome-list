@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { StyleSheet, View, TouchableOpacity, Image, ImageBackground, ViewPropTypes, FlatList } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Image, ImageBackground, ViewPropTypes, FlatList, SectionList } from 'react-native';
 import AwesomeListMode from './AwesomeListMode';
 import AwesomeListStyle from './AwesomeListStyle';
 import { isObject, isArray, isString } from './AwesomeListUtils';
@@ -258,6 +258,8 @@ class AwesomeListComponent extends Component {
                     sections={this.state.sections}
                     onRefresh={() => this.onRefresh()}
                     ListHeaderComponent={listHeaderComponent}
+                    refreshing={this.state.refreshing}
+
 
                 /> : <FlatList
                         style={listStyle}
