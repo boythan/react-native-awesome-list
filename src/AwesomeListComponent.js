@@ -136,9 +136,7 @@ class AwesomeListComponent extends Component {
                 return;
             }
 
-
-
-            if (_.isEmpty(data)) {
+            if (_.isEmpty(data) && this.state.data.length == 0) {
                 this.setState({ data: [], sections, pagingMode: AwesomeListMode.HIDDEN, emptyMode: AwesomeListMode.EMPTY, refreshing: false })
                 return;
             }
@@ -279,7 +277,7 @@ class AwesomeListComponent extends Component {
                     />
 
                 }
-                <EmptyView mode={this.state.emptyMode} retry={() => this.onRetry()} renderEmptyView={renderEmptyView} emptyText={emptyText} renderErrorView = {renderErrorView && renderErrorView}/>
+                <EmptyView mode={this.state.emptyMode} retry={() => this.onRetry()} renderEmptyView={renderEmptyView} emptyText={emptyText} renderErrorView={renderErrorView && renderErrorView} />
             </View>
         )
     }
