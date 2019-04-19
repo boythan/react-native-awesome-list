@@ -45,7 +45,8 @@ class AwesomeListComponent extends Component {
         renderEmptyView: ViewPropTypes.func,
         renderErrorView: ViewPropTypes.func,
         listHeaderComponent: ViewPropTypes.func,
-        emptyText: ViewPropTypes.string
+        emptyText: ViewPropTypes.string,
+        numColumns: ViewPropTypes.string,
 
     };
 
@@ -74,7 +75,8 @@ class AwesomeListComponent extends Component {
         renderEmptyView: null,
         listHeaderComponent: null,
         emptyText: 'No result',
-        renderErrorView: null
+        renderErrorView: null,
+        numColumns: 1
 
     }
 
@@ -244,7 +246,8 @@ class AwesomeListComponent extends Component {
             renderEmptyView,
             listHeaderComponent,
             emptyText,
-            renderErrorView
+            renderErrorView,
+            numColumns
         } = this.props;
 
         return (
@@ -274,6 +277,7 @@ class AwesomeListComponent extends Component {
                         ListFooterComponent={() => (<PagingView mode={this.state.pagingMode} retry={() => this.onRetry()} />)}
                         onEndReachedThreshold={0.5}
                         ListHeaderComponent={listHeaderComponent}
+                        numColumns= {numColumns}
                     />
 
                 }
