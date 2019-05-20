@@ -39,6 +39,7 @@ class AwesomeListComponent extends Component {
         transformer: ViewPropTypes.func,
 
         isPaging: ViewPropTypes.bool,
+        isSectionList: ViewPropTypes.bool,
 
         renderSectionHeader: ViewPropTypes.func,
         createSections: ViewPropTypes.func,
@@ -69,6 +70,7 @@ class AwesomeListComponent extends Component {
         listStyle: AwesomeListStyle.listStyle,
 
         isPaging: false,
+        isSectionList: false,
 
         renderSectionHeader: null,
         createSections: null,
@@ -102,7 +104,7 @@ class AwesomeListComponent extends Component {
     }
 
     isSectionsList() {
-        return !!this.props.renderSectionHeader;
+        return this.props.isSectionList;
     }
 
     /**CONTROL VIEW */
@@ -277,7 +279,7 @@ class AwesomeListComponent extends Component {
                         ListFooterComponent={() => (<PagingView mode={this.state.pagingMode} retry={() => this.onRetry()} />)}
                         onEndReachedThreshold={0.5}
                         ListHeaderComponent={listHeaderComponent}
-                        numColumns= {numColumns}
+                        numColumns={numColumns}
                     />
 
                 }
