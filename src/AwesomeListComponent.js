@@ -47,6 +47,7 @@ class AwesomeListComponent extends Component {
         renderErrorView: ViewPropTypes.func,
         listHeaderComponent: ViewPropTypes.func,
         emptyText: ViewPropTypes.string,
+        filterEmptyText: ViewPropTypes.string,
         numColumns: ViewPropTypes.string,
 
     };
@@ -77,6 +78,7 @@ class AwesomeListComponent extends Component {
         renderEmptyView: null,
         listHeaderComponent: null,
         emptyText: 'No result',
+        filterEmptyText: 'No filter result',
         renderErrorView: null,
         numColumns: 1
 
@@ -249,7 +251,8 @@ class AwesomeListComponent extends Component {
             listHeaderComponent,
             emptyText,
             renderErrorView,
-            numColumns
+            numColumns,
+            filterEmptyText
         } = this.props;
 
         return (
@@ -283,7 +286,7 @@ class AwesomeListComponent extends Component {
                     />
 
                 }
-                <EmptyView mode={this.state.emptyMode} retry={() => this.onRetry()} renderEmptyView={renderEmptyView} emptyText={emptyText} renderErrorView={renderErrorView && renderErrorView} />
+                <EmptyView mode={this.state.emptyMode} retry={() => this.onRetry()} renderEmptyView={renderEmptyView} emptyText={emptyText} renderErrorView={renderErrorView && renderErrorView} filterEmptyText={filterEmptyText} />
             </View>
         )
     }
