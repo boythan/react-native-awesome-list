@@ -161,7 +161,7 @@ class AwesomeListComponent extends Component {
              * display emptyView with error mode
              */
             if (this.pagingData.pageIndex === DEFAULT_PAGING_DATA.pageIndex) {
-                this.setState({ pagingMode: AwesomeListMode.HIDDEN, emptyMode: AwesomeListMode.ERROR, data: [], refreshing: false })
+                this.setState({ pagingMode: AwesomeListMode.HIDDEN, emptyMode: AwesomeListMode.ERROR, data: [], sections: [], refreshing: false })
             } else {
                 this.setState({ pagingMode: AwesomeListMode.ERROR, emptyMode: AwesomeListMode.HIDDEN, refreshing: false })
 
@@ -189,7 +189,7 @@ class AwesomeListComponent extends Component {
     refresh() {
         this.noMoreData = false;
         this.pagingData = null;
-        this.setState({ data: [], emptyMode: AwesomeListMode.PROGRESS, pagingMode: AwesomeListMode.HIDDEN }, () => this.start())
+        this.setState({ data: [], sections: [], emptyMode: AwesomeListMode.PROGRESS, pagingMode: AwesomeListMode.HIDDEN }, () => this.start())
     }
 
     onEndReached() {
@@ -221,9 +221,13 @@ class AwesomeListComponent extends Component {
         })
 
         if (!dataFilter || dataFilter.length == 0) {
-            this.setState({ data: [], emptyMode: AwesomeListMode.FILTER_EMPTY, pagingMode: AwesomeListMode.HIDDEN })
+            this.setState({ data: [], sections: [], emptyMode: AwesomeListMode.FILTER_EMPTY, pagingMode: AwesomeListMode.HIDDEN })
         } else {
-            this.setState({ data: dataFilter, emptyMode: AwesomeListMode.HIDDEN, pagingMode: AwesomeListMode.HIDDEN })
+            let sections = []
+            if (this.isSectionsList()) {
+                sections = this.props.createSections(dataFilter)
+            }
+            this.setState({ data: dataFilter, sections, emptyMode: AwesomeListMode.HIDDEN, pagingMode: AwesomeListMode.HIDDEN })
         }
     }
 
@@ -232,8 +236,12 @@ class AwesomeListComponent extends Component {
             console.log('You have not apply any filter data')
             return;
         }
+        let sections = []
+        if (this.isSectionsList()) {
+            sections = this.props.createSections(this.orginData)
+        }
 
-        this.setState({ emptyMode: AwesomeListMode.HIDDEN, data: this.orginData }, () => { this.orginData = null })
+        this.setState({ emptyMode: AwesomeListMode.HIDDEN, data: this.orginData, sections }, () => { this.orginData = null })
     }
 
     render() {
