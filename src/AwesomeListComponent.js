@@ -268,7 +268,7 @@ class AwesomeListComponent extends Component {
                 {this.isSectionsList() ? <SectionList
                     style={listStyle}
                     renderItem={(item) => renderItem(item)}
-                    keyExtractor={(item) => keyExtractor(item)}
+                    keyExtractor={(item, index) => keyExtractor(item, index)}
                     ItemSeparatorComponent={() => renderSeparator()}
                     renderSectionHeader={(section) => renderSectionHeader(section)}
                     stickySectionHeadersEnabled={true}
@@ -282,7 +282,7 @@ class AwesomeListComponent extends Component {
                         style={listStyle}
                         data={this.state.data}
                         renderItem={(item) => renderItem(item)}
-                        keyExtractor={(item) => keyExtractor(item)}
+                        keyExtractor={(item, index) => keyExtractor(item, index)}
                         ItemSeparatorComponent={() => renderSeparator()}
                         refreshing={this.state.refreshing}
                         onRefresh={() => this.onRefresh()}
