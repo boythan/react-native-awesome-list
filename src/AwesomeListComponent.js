@@ -45,7 +45,7 @@ class AwesomeListComponent extends Component {
         createSections: ViewPropTypes.func,
         renderEmptyView: ViewPropTypes.func,
         renderErrorView: ViewPropTypes.func,
-        renderProgress: PropTypes.func,
+        renderProgress: ViewPropTypes.func,
 
         listHeaderComponent: ViewPropTypes.func,
         emptyText: ViewPropTypes.string,
@@ -283,26 +283,26 @@ class AwesomeListComponent extends Component {
 
 
                 /> : <FlatList
-                        style={listStyle}
-                        data={this.state.data}
-                        renderItem={(item) => renderItem(item)}
-                        keyExtractor={(item, index) => keyExtractor(item, index)}
-                        ItemSeparatorComponent={() => renderSeparator()}
-                        refreshing={this.state.refreshing}
-                        onRefresh={() => this.onRefresh()}
-                        onEndReached={() => this.onEndReached()}
-                        ListFooterComponent={() => (<PagingView mode={this.state.pagingMode} retry={() => this.onRetry()} />)}
-                        onEndReachedThreshold={0.5}
-                        ListHeaderComponent={listHeaderComponent}
-                        numColumns={numColumns}
-                    />
+                    style={listStyle}
+                    data={this.state.data}
+                    renderItem={(item) => renderItem(item)}
+                    keyExtractor={(item, index) => keyExtractor(item, index)}
+                    ItemSeparatorComponent={() => renderSeparator()}
+                    refreshing={this.state.refreshing}
+                    onRefresh={() => this.onRefresh()}
+                    onEndReached={() => this.onEndReached()}
+                    ListFooterComponent={() => (<PagingView mode={this.state.pagingMode} retry={() => this.onRetry()} />)}
+                    onEndReachedThreshold={0.5}
+                    ListHeaderComponent={listHeaderComponent}
+                    numColumns={numColumns}
+                />
 
                 }
                 <EmptyView
                     mode={this.state.emptyMode}
                     retry={() => this.onRetry()}
                     renderEmptyView={renderEmptyView}
-                    emptyText={emptyText} 
+                    emptyText={emptyText}
                     renderErrorView={renderErrorView && renderErrorView}
                     renderProgress={renderProgress && renderProgress}
                     filterEmptyText={filterEmptyText} />
