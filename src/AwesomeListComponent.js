@@ -45,6 +45,8 @@ class AwesomeListComponent extends Component {
         createSections: ViewPropTypes.func,
         renderEmptyView: ViewPropTypes.func,
         renderErrorView: ViewPropTypes.func,
+        renderProgress: PropTypes.func,
+
         listHeaderComponent: ViewPropTypes.func,
         emptyText: ViewPropTypes.string,
         filterEmptyText: ViewPropTypes.string,
@@ -80,6 +82,7 @@ class AwesomeListComponent extends Component {
         emptyText: 'No result',
         filterEmptyText: 'No filter result',
         renderErrorView: null,
+        renderProgress: null,
         numColumns: 1
 
     }
@@ -112,11 +115,11 @@ class AwesomeListComponent extends Component {
     /**CONTROL VIEW */
 
     /**
-     * call API from source, and fill data to the list 
-     * if the component is unmounted => return; 
-     * if error, show emptyView with error mode, reset data to empty, 
-     * 
-     * if reponse is passed, fill data to the list, set empty mode is hidden 
+     * call API from source, and fill data to the list
+     * if the component is unmounted => return;
+     * if error, show emptyView with error mode, reset data to empty,
+     *
+     * if reponse is passed, fill data to the list, set empty mode is hidden
      */
 
     start() {
@@ -125,7 +128,7 @@ class AwesomeListComponent extends Component {
 
         const { source, transformer } = this.props;
         /**
-         * if the first load in paging list, construct to pagingData, 
+         * if the first load in paging list, construct to pagingData,
          */
         if (!this.pagingData) {
             this.pagingData = DEFAULT_PAGING_DATA
@@ -172,7 +175,7 @@ class AwesomeListComponent extends Component {
         this.setState({ emptyMode: AwesomeListMode.PROGRESS }, this.start())
     }
     /**
-     * this function help list refresh when list is scrolled down. 
+     * this function help list refresh when list is scrolled down.
      * enable refreshing in list data
      * action refresh
      */
@@ -183,8 +186,8 @@ class AwesomeListComponent extends Component {
 
     /**
      * actual refresh data list
-     * set data list is empty list, 
-     * call start function to recall source function. 
+     * set data list is empty list,
+     * call start function to recall source function.
      */
     refresh() {
         this.noMoreData = false;
@@ -213,7 +216,7 @@ class AwesomeListComponent extends Component {
     }
     /**
      * should not be call in acestor component
-     * @param {*} actionFilter 
+     * @param {*} actionFilter
      */
     calculateFilter(actionFilter) {
         const dataFilter = _.filter(this.orginData, (item, index) => {
@@ -259,6 +262,7 @@ class AwesomeListComponent extends Component {
             listHeaderComponent,
             emptyText,
             renderErrorView,
+            renderProgress,
             numColumns,
             filterEmptyText
         } = this.props;
@@ -294,7 +298,14 @@ class AwesomeListComponent extends Component {
                     />
 
                 }
-                <EmptyView mode={this.state.emptyMode} retry={() => this.onRetry()} renderEmptyView={renderEmptyView} emptyText={emptyText} renderErrorView={renderErrorView && renderErrorView} filterEmptyText={filterEmptyText} />
+                <EmptyView
+                    mode={this.state.emptyMode}
+                    retry={() => this.onRetry()}
+                    renderEmptyView={renderEmptyView}
+                    emptyText={emptyText} 
+                    renderErrorView={renderErrorView && renderErrorView}
+                    renderProgress={renderProgress && renderProgress}
+                    filterEmptyText={filterEmptyText} />
             </View>
         )
     }
