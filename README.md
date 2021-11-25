@@ -12,8 +12,9 @@ yarn add https://github.com/boythan/react-native-awesome-list.git
 
 ## Using
 
-```js
 ### FlatList with raw data
+
+```js
 import AwesomeListComponent from "react-native-awesome-list";
 
 //...
@@ -44,13 +45,14 @@ export default const RawDataAwesomeList = () => {
 
   //...
 }
+```
 
 ### FlatList with Promise, API call
 
+```js
 import AwesomeListComponent from "react-native-awesome-list";
 
 //...
-
 
 export default const CustomerAwesomeList = () => {
   const listRef = useRef(null)
@@ -85,12 +87,14 @@ export default const CustomerAwesomeList = () => {
 
   //...
 }
+```
+
 ### SectionList
 
+```js
 import AwesomeListComponent from "react-native-awesome-list";
 
 //...
-
 
 export default const CustomerAwesomeList = () => {
   const listRef = useRef(null)
