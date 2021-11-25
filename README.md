@@ -149,7 +149,6 @@ export default const CustomerAwesomeList = () => {
 | Prop   |          Default          |      Type       | Description    |
 | :----- | :-----------------------: | :-------------: | :------------- |
 | source | () => Promise.resolve([]) | `() => Promise` | Source of data |
-
 | transformer | (response) => response | `() => array` | Array will be displayed in list |
 | renderItem | ({item, index}) => <View/> | `func` | render function for list item rendering |
 | keyExtractor | (item) => item?.id ?? item | `func` | unique key for row |
@@ -175,7 +174,6 @@ export default const CustomerAwesomeList = () => {
 | method  | params |                          Description                          |
 | :------ | :----: | :-----------------------------------------------------------: |
 | refresh |  null  | Refresh data, awesomeList will re-run source then transformer |
-
 | applyFilter | actionFilter | when you want to apply some filter for this list E.g listRef.applyFilter(item => item.isSelect) |
 | removeFilter | null | when you want to remove all filter that you applied before |
 
