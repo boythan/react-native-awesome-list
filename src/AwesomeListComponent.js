@@ -27,24 +27,23 @@ class AwesomeListComponent extends Component {
   }
 
   static propTypes = {
+    source: ViewPropTypes.func,
+    transformer: ViewPropTypes.func,
+    renderItem: ViewPropTypes.func,
+    keyExtractor: ViewPropTypes.func,
+    isPaging: ViewPropTypes.bool,
+    pageSize: ViewPropTypes.number,
+
     containerStyle: ViewPropTypes.style,
     listStyle: ViewPropTypes.style,
     emptyViewStyle: ViewPropTypes.style,
 
-    source: ViewPropTypes.func,
-    keyExtractor: ViewPropTypes.func,
-    type: ViewPropTypes.string,
-
-    renderItem: ViewPropTypes.func,
     renderSeparator: ViewPropTypes.func,
 
-    transformer: ViewPropTypes.func,
-
-    isPaging: ViewPropTypes.bool,
     isSectionList: ViewPropTypes.bool,
-
     renderSectionHeader: ViewPropTypes.func,
     createSections: ViewPropTypes.func,
+
     renderEmptyView: ViewPropTypes.func,
     renderErrorView: ViewPropTypes.func,
     renderProgress: ViewPropTypes.func,
@@ -53,11 +52,17 @@ class AwesomeListComponent extends Component {
     emptyText: ViewPropTypes.string,
     filterEmptyText: ViewPropTypes.string,
     numColumns: ViewPropTypes.string,
-
-    pageSize: ViewPropTypes.number,
   };
 
   static defaultProps = {
+    source: () => Promise.resolve([]),
+    transformer: (response) => {
+      return response;
+    },
+    renderItem: () => <View />,
+    isPaging: false,
+    pageSize: DEFAULT_PAGE_SIZE,
+
     keyExtractor: (item) => {
       if (item.id) {
         return item.id;
@@ -67,16 +72,11 @@ class AwesomeListComponent extends Component {
 
       console.log("You need to provide a key extractor");
     },
-    renderSeparator: () => <View />,
-    source: Promise.resolve([]),
-    transformer: (response) => {
-      return response;
-    },
 
     containerStyle: AwesomeListStyle.containerListStyle,
     listStyle: AwesomeListStyle.listStyle,
 
-    isPaging: false,
+    renderSeparator: () => <View />,
     isSectionList: false,
 
     renderSectionHeader: null,
@@ -88,7 +88,6 @@ class AwesomeListComponent extends Component {
     renderErrorView: null,
     renderProgress: null,
     numColumns: 1,
-    pageSize: DEFAULT_PAGE_SIZE,
   };
 
   componentDidMount() {
@@ -322,7 +321,6 @@ class AwesomeListComponent extends Component {
       listStyle,
       emptyViewStyle,
       source,
-      type,
       keyExtractor,
       renderItem,
       renderSeparator,
