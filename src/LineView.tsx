@@ -1,14 +1,22 @@
-import React, { Component } from 'react';
-import {
-    View,
-} from 'react-native';
+/* eslint-disable react-native/no-inline-styles */
+import React from "react";
+import { View } from "react-native";
 
-
-class Line extends Component {
-    render() {
-        return (
-            <View style={{ width: '100%', height: this.props.height || 1, backgroundColor: this.props.color || '#d3dfe4', marginLeft: this.props.marginLeft || 0, ...this.props.style}}></View>
-        );
-    }
+interface ILineProps {
+  height?: any;
+  color?: any;
+  style?: any;
 }
-export default Line
+
+const Line = ({ height, color, style }: ILineProps) => (
+  <View
+    style={{
+      width: "100%",
+      height: height || 1,
+      backgroundColor: color || "#d3dfe4",
+      ...style,
+    }}
+  />
+);
+
+export default Line;

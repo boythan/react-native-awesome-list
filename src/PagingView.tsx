@@ -1,24 +1,23 @@
-import React, { Component } from 'react';
-import { View, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
-import Mode from './AwesomeListMode';
-import AwesomeListStyle from './AwesomeListStyle';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import Mode from "./AwesomeListMode";
+import AwesomeListStyle from "./AwesomeListStyle";
+
+interface IPagingViewProps {
+  mode: typeof Mode.PROGRESS | typeof Mode.HIDDEN | typeof Mode.ERROR;
+  renderProgress: any;
+  renderErrorView: any;
+  retry: any;
+}
 
 // create a component
-class PagingView extends Component {
-  static propTypes = {
-    mode: PropTypes.oneOf(Mode.HIDDEN, Mode.PROGRESS, Mode.ERROR),
-    renderProgress: PropTypes.func,
-    renderErrorView: PropTypes.func,
-    retry: PropTypes.func,
-  }
-
+class PagingView extends Component<IPagingViewProps, any> {
   static defaultProps = {
     mode: Mode.HIDDEN,
     renderProgress: null,
     renderErrorView: null,
     retry: null,
-  }
+  };
 
   /**
    * Should not be override this method
@@ -57,7 +56,7 @@ class PagingView extends Component {
    * Incase change only few cases, we should use props.renderProgress
    */
   renderProgress() {
-    return (<ActivityIndicator />);
+    return <ActivityIndicator />;
   }
 
   /**
@@ -67,8 +66,14 @@ class PagingView extends Component {
   renderErrorView() {
     return (
       <View>
-        <Text style={AwesomeListStyle.textError}>Error View, insert a button to retry</Text>
-        <TouchableOpacity activeOpacity={0.8} onPress={() => this.retryInternal()} style={AwesomeListStyle.buttonRetry}>
+        <Text style={AwesomeListStyle.textError}>
+          Error View, insert a button to retry
+        </Text>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => this.retryInternal()}
+          style={AwesomeListStyle.buttonRetry}
+        >
           <Text style={AwesomeListStyle.textButtonRetry}>Retry</Text>
         </TouchableOpacity>
       </View>
