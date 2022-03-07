@@ -8,49 +8,47 @@
  * @format
  */
 
-import React from "react";
-import { Image, SafeAreaView, StyleSheet, Text, View } from "react-native";
-import AwesomeListComponent from "..";
-
-const axios = require("axios").default;
-const getUserGitList = () => {
-  const instance = axios.create({
-    baseURL: "https://api.github.com/",
-    timeout: 1000,
-  });
-  return instance.get("users");
-};
+import { find, map } from "lodash";
+import React, { useState } from "react";
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from "react-native";
+import AppHeader from "./components/AppHeader";
+import FlatListRawData from "./components/FlatListRawData";
+import FlatListSyncData from "./components/FlatListSyncData";
+import { TYPE_LIST } from "./service/constant";
 
 const App = () => {
-  const source = () => {
-    return getUserGitList();
+  const [type, setType] = useState<any>();
+  const onClickBack = () => setType(null);
+
+  const renderMainContent = () => {
+    switch (type) {
+      case "flatListRawData":
+        return <FlatListRawData />;
+      case "flatListAsyncData":
+        return <FlatListSyncData />;
+      default:
+        return renderTypeList();
+    }
   };
 
-  const transformer = (res: any) => {
-    return res?.data ?? [];
-  };
-
-  const renderUserItem = ({ item, index }: any) => (
-    <View style={styles.containerUserItem}>
-      <View style={styles.containerUserItemContent}>
-        <Image
-          source={{ uri: item?.avatar_url }}
-          style={styles.imageUserAvatar}
-        />
-        <View style={styles.containerUserName}>
-          <Text style={styles.textUserName}>{item?.login}</Text>
-        </View>
-      </View>
-    </View>
-  );
+  const renderTypeList = () =>
+    map(TYPE_LIST, (typeList) => (
+      <TouchableOpacity
+        style={styles.containerTypeListItem}
+        onPress={() => setType(typeList?.id)}
+      >
+        <Text>{typeList.label}</Text>
+      </TouchableOpacity>
+    ));
 
   return (
     <SafeAreaView style={styles.container}>
-      <AwesomeListComponent
-        source={source}
-        renderItem={renderUserItem}
-        transformer={transformer}
+      <AppHeader
+        title={find(TYPE_LIST, (item) => item.id === type)?.label ?? "List"}
+        onClickBack={onClickBack}
+        hiddenBack={!type}
       />
+      {renderMainContent()}
     </SafeAreaView>
   );
 };
@@ -60,27 +58,12 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
   },
-  containerUserItem: {
+  containerTypeListItem: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-  },
-  containerUserItemContent: {
-    flexDirection: "row",
-  },
-  containerUserName: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  imageUserAvatar: {
-    height: 48,
-    width: 48,
-    resizeMode: "contain",
-    borderRadius: 24,
-  },
-
-  textUserName: {
-    marginLeft: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#dadada",
+    width: "100%",
   },
 });
 

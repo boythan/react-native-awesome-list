@@ -1,6 +1,12 @@
 import _ from "lodash";
 import React, { Component } from "react";
-import { FlatList, SectionList, View } from "react-native";
+import {
+  FlatList,
+  FlatListProps,
+  SectionList,
+  SectionListProps,
+  View,
+} from "react-native";
 import Mode from "./AwesomeListMode";
 import AwesomeListStyle from "./AwesomeListStyle";
 import { isArray, isString } from "./AwesomeListUtils";
@@ -8,12 +14,13 @@ import EmptyView from "./EmptyView";
 import PagingView from "./PagingView";
 
 const DEFAULT_PAGE_SIZE = 20;
+type IListProps = Omit<FlatListProps<any>, "data"> &
+  Omit<SectionListProps<any, any>, "sections">;
 
-interface IAwesomeListProps {
+interface IAwesomeListProps extends IListProps {
   source?: any;
   transformer?: any;
   renderItem: any;
-  keyExtractor?: any;
   isPaging?: boolean;
   pageSize?: number;
 
@@ -24,7 +31,6 @@ interface IAwesomeListProps {
   renderSeparator?: any;
 
   isSectionList?: boolean;
-  renderSectionHeader?: any;
   createSections?: any;
 
   renderEmptyView?: any;
@@ -34,7 +40,8 @@ interface IAwesomeListProps {
   listHeaderComponent?: any;
   emptyText?: string;
   filterEmptyText?: string;
-  numColumns?: number;
+
+  [key: string]: any;
 }
 
 interface IAwesomeListState {
@@ -50,7 +57,6 @@ class AwesomeListComponent extends Component<
   IAwesomeListState
 > {
   static defaultProps = {
-    source: () => Promise.resolve([]),
     transformer: (response: any) => {
       return response;
     },
@@ -58,23 +64,12 @@ class AwesomeListComponent extends Component<
     isPaging: false,
     pageSize: DEFAULT_PAGE_SIZE,
 
-    keyExtractor: (item: any) => {
-      if (item.id) {
-        return item.id;
-      }
-
-      if (isString(item)) return item;
-
-      console.log("You need to provide a key extractor");
-    },
-
     containerStyle: AwesomeListStyle.containerListStyle,
     listStyle: AwesomeListStyle.listStyle,
 
     renderSeparator: () => <View />,
     isSectionList: false,
 
-    renderSectionHeader: null,
     createSections: null,
     renderEmptyView: null,
     listHeaderComponent: null,
@@ -82,7 +77,6 @@ class AwesomeListComponent extends Component<
     filterEmptyText: "No filter result",
     renderErrorView: null,
     renderProgress: null,
-    numColumns: 1,
   };
 
   DEFAULT_PAGING_DATA: { pageIndex: number; pageSize: number | undefined };
@@ -90,6 +84,7 @@ class AwesomeListComponent extends Component<
   noMoreData: any;
   pagingData: any;
   originData: any;
+  isSectionList: boolean | undefined;
 
   constructor(props: IAwesomeListProps) {
     super(props);
@@ -105,6 +100,8 @@ class AwesomeListComponent extends Component<
       pageIndex: 1,
       pageSize: props.pageSize,
     };
+
+    this.isSectionList = this.props.isSectionList;
   }
 
   componentDidMount() {
@@ -127,14 +124,10 @@ class AwesomeListComponent extends Component<
       !newData ||
       !isArray(newData) ||
       !this.props.isPaging ||
-      this.isSectionsList()
+      this.props.isSectionList
     )
       return true;
     return this.pagingData ? newData.length < this.pagingData.pageSize : false;
-  }
-
-  isSectionsList() {
-    return this.props.isSectionList;
   }
 
   /**CONTROL VIEW */
@@ -158,76 +151,79 @@ class AwesomeListComponent extends Component<
       this.pagingData = this.DEFAULT_PAGING_DATA;
     }
 
-    source(this.pagingData)
-      .then((response: any) => {
-        this.pagingData = {
-          ...this.pagingData,
-          pageIndex: this.pagingData.pageIndex + 1,
-        };
-        let data = transformer(response);
-        let sections: any[] = [];
-        this.noMoreData = this.isNoMoreData(data);
+    source &&
+      source(this.pagingData)
+        .then((response: any) => {
+          this.pagingData = {
+            ...this.pagingData,
+            pageIndex: this.pagingData.pageIndex + 1,
+          };
+          let data = transformer(response);
+          let sections: any[] = [];
+          this.noMoreData = this.isNoMoreData(data);
 
-        if (!isArray(data)) {
-          throw "Data is not an array";
-        }
+          if (!isArray(data)) {
+            throw "Data is not an array";
+          }
 
-        if (_.isEmpty(data) && this.state.data.length === 0) {
+          if (_.isEmpty(data) && this.state.data.length === 0) {
+            this.setState({
+              data: [],
+              sections,
+              pagingMode: Mode.HIDDEN,
+              emptyMode: Mode.EMPTY,
+              refreshing: false,
+            });
+            return;
+          }
+
+          if (this.isSectionList) {
+            sections = this.props.createSections(data);
+          }
           this.setState({
-            data: [],
+            data: this.state.data.concat(data),
             sections,
             pagingMode: Mode.HIDDEN,
-            emptyMode: Mode.EMPTY,
-            refreshing: false,
-          });
-          return;
-        }
-
-        if (this.isSectionsList()) {
-          sections = this.props.createSections(data);
-        }
-        this.setState({
-          data: this.state.data.concat(data),
-          sections,
-          pagingMode: Mode.HIDDEN,
-          emptyMode: Mode.HIDDEN,
-          refreshing: false,
-        });
-      })
-      .catch((error: any) => {
-        console.log(error);
-        if (this._unmounted) return;
-        /**
-         * if the first loading
-         * display emptyView with error mode
-         */
-        if (this.pagingData.pageIndex === this.DEFAULT_PAGING_DATA.pageIndex) {
-          this.setState({
-            pagingMode: Mode.HIDDEN,
-            emptyMode: Mode.ERROR,
-            data: [],
-            sections: [],
-            refreshing: false,
-          });
-        } else {
-          this.setState({
-            pagingMode: Mode.ERROR,
             emptyMode: Mode.HIDDEN,
             refreshing: false,
           });
-        }
-      });
+        })
+        .catch((error: any) => {
+          console.log(error);
+          if (this._unmounted) return;
+          /**
+           * if the first loading
+           * display emptyView with error mode
+           */
+          if (
+            this.pagingData.pageIndex === this.DEFAULT_PAGING_DATA.pageIndex
+          ) {
+            this.setState({
+              pagingMode: Mode.HIDDEN,
+              emptyMode: Mode.ERROR,
+              data: [],
+              sections: [],
+              refreshing: false,
+            });
+          } else {
+            this.setState({
+              pagingMode: Mode.ERROR,
+              emptyMode: Mode.HIDDEN,
+              refreshing: false,
+            });
+          }
+        });
   }
-  onRetry() {
+  onRetry = () => {
     this.setState({ emptyMode: Mode.PROGRESS }, () => this.start());
-  }
+  };
   /**
    * this function help list refresh when list is scrolled down.
    * enable refreshing in list data
    * action refresh
    */
 
-  onRefresh() {
+  onRefresh = () => {
     this.setState(
       {
         refreshing: true,
@@ -236,7 +232,7 @@ class AwesomeListComponent extends Component<
       },
       () => this.refresh()
     );
-  }
+  };
 
   /**
    * actual refresh data list
@@ -257,7 +253,7 @@ class AwesomeListComponent extends Component<
     );
   }
 
-  onEndReached() {
+  onEndReached = () => {
     if (
       this.noMoreData ||
       !this.props.isPaging ||
@@ -268,10 +264,10 @@ class AwesomeListComponent extends Component<
     }
 
     this.setState({ pagingMode: Mode.PROGRESS }, () => this.start());
-  }
+  };
 
   /** Apply filter  to list*/
-  applyFilter(actionFilter: any) {
+  applyFilter = (actionFilter: any) => {
     if (
       (!this.state.data || this.state.data.length === 0) &&
       !this.originData
@@ -285,12 +281,12 @@ class AwesomeListComponent extends Component<
     this.setState({ emptyMode: Mode.PROGRESS }, () =>
       this.calculateFilter(actionFilter)
     );
-  }
+  };
   /**
    * should not be call in acestor component
    * @param {*} actionFilter
    */
-  calculateFilter(actionFilter: any) {
+  calculateFilter = (actionFilter: any) => {
     const dataFilter = _.filter(this.originData, (item: any, index: number) => {
       return actionFilter(item, index);
     });
@@ -304,7 +300,7 @@ class AwesomeListComponent extends Component<
       });
     } else {
       let sections = [];
-      if (this.isSectionsList()) {
+      if (this.isSectionList) {
         sections = this.props.createSections(dataFilter);
       }
       this.setState({
@@ -314,15 +310,15 @@ class AwesomeListComponent extends Component<
         pagingMode: Mode.HIDDEN,
       });
     }
-  }
+  };
 
-  removeFilter() {
+  removeFilter = () => {
     if (!this.originData) {
       console.log("You have not apply any filter data");
       return;
     }
     let sections = [];
-    if (this.isSectionsList()) {
+    if (this.isSectionList) {
       sections = this.props.createSections(this.originData);
     }
 
@@ -332,64 +328,59 @@ class AwesomeListComponent extends Component<
         this.originData = null;
       }
     );
-  }
+  };
 
   render() {
     const {
       containerStyle,
       listStyle,
-      keyExtractor,
+
       renderItem,
       renderSeparator,
-      renderSectionHeader,
       renderEmptyView,
       listHeaderComponent,
       emptyText,
       renderErrorView,
       renderProgress,
-      numColumns,
       filterEmptyText,
+
+      ...listProps
     } = this.props;
 
     return (
       <View style={containerStyle}>
-        {this.isSectionsList() ? (
+        {this.isSectionList ? (
           <SectionList
             style={listStyle}
-            renderItem={(item) => renderItem(item)}
-            keyExtractor={(item, index) => keyExtractor(item, index)}
-            ItemSeparatorComponent={() => renderSeparator()}
-            renderSectionHeader={(section) => renderSectionHeader(section)}
+            renderItem={renderItem}
+            ItemSeparatorComponent={renderSeparator}
             stickySectionHeadersEnabled={true}
-            sections={this.state.sections}
-            onRefresh={() => this.onRefresh()}
             ListHeaderComponent={listHeaderComponent}
+            sections={this.state.sections}
+            {...listProps}
             refreshing={this.state.refreshing}
+            onRefresh={this.onRefresh}
           />
         ) : (
           <FlatList
             style={listStyle}
-            data={this.state.data}
-            renderItem={(item) => renderItem(item)}
-            keyExtractor={(item, index) => keyExtractor(item, index)}
-            ItemSeparatorComponent={() => renderSeparator()}
-            refreshing={this.state.refreshing}
-            onRefresh={() => this.onRefresh()}
-            onEndReached={() => this.onEndReached()}
-            ListFooterComponent={() => (
-              <PagingView
-                mode={this.state.pagingMode}
-                retry={() => this.onRetry()}
-              />
-            )}
+            renderItem={renderItem}
+            ItemSeparatorComponent={renderSeparator}
             onEndReachedThreshold={0.5}
             ListHeaderComponent={listHeaderComponent}
-            numColumns={numColumns}
+            data={this.state.data}
+            {...listProps}
+            ListFooterComponent={() => (
+              <PagingView mode={this.state.pagingMode} retry={this.onRetry} />
+            )}
+            onRefresh={this.onRefresh}
+            onEndReached={this.onEndReached}
+            refreshing={this.state.refreshing}
           />
         )}
         <EmptyView
           mode={this.state.emptyMode}
-          retry={() => this.onRetry()}
+          retry={this.onRetry}
           renderEmptyView={renderEmptyView}
           emptyText={emptyText}
           renderErrorView={renderErrorView && renderErrorView}
