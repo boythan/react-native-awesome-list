@@ -332,12 +332,14 @@ class AwesomeListComponent extends Component {
       renderProgress,
       numColumns,
       filterEmptyText,
+      ...props
     } = this.props;
 
     return (
       <View style={containerStyle}>
         {this.isSectionsList() ? (
           <SectionList
+            {...props}
             style={listStyle}
             renderItem={(item) => renderItem(item)}
             keyExtractor={(item, index) => keyExtractor(item, index)}
@@ -351,6 +353,7 @@ class AwesomeListComponent extends Component {
           />
         ) : (
           <FlatList
+            {...props}
             style={listStyle}
             data={this.state.data}
             renderItem={(item) => renderItem(item)}
