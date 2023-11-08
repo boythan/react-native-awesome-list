@@ -171,7 +171,7 @@ class AwesomeListComponent extends Component {
           sections = this.props.createSections(data);
         }
         this.setState({
-          data: props?.inverted
+          data: this.props?.inverted
             ? data.concat(this.state.data)
             : this.state.data.concat(data),
           sections,
